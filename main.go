@@ -12,6 +12,7 @@ import (
 	//"io/ioutil"
 	//"os"
 )
+//creates a new md5 hash for the given key
 func createHash(key string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(key))
@@ -31,7 +32,19 @@ func encrypt(data []byte, passphrase string) []byte {
 	return ciphertext
 } 
 
+func decrypt(data []byte, passphrase string) []byte {
+	key := []byte(createHash(passphrase))
+	block, _ := aes.NewCipher(key)
+	gcm, _ := cipher.NewCCM(block) // todo make a func for this
+	nonceSize := gcm.NonceSize()
+	nonce, ciphertext :=  data[:nonceSize], data [nonceSize:] //before and after
+	plaintext, _ := gcm.Open(nil, nonce, ciphertext, nil)
+	return plaintext
+}
 func main() {
 	ciphertext := encrypt([]byte("Hello Wolrd this will be encrypted"), "password")
 	fmt.Println(string(ciphertext)) //converts the buffer into a encoded str
+
+	plaintext := decrypt(ciphertext, "password")
+	fmt.Println(string(plaintext))
 }
