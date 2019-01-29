@@ -20,14 +20,18 @@ func createHash(key string) string {
 
 func encrypt(data []byte, passphrase string) []byte {
 	block, _ := aes.NewCipher([]byte(createHash(passphrase)))
-	gcm, _ := cipher.NewGCM(block)
+	gcm, err := cipher.NewGCM(block)	
+	if err != nil {
+		fmt.Println("error with NewGCM line23\n")
+	}
+
 	nonce := make([]byte, gcm.NonceSize())
-	io.ReadFull(rand.Reader, nonce) //random is good for encryption guess why
-	ciphertext := gcm.Seal(nonce, nonce, data, nil)
+	io.ReadFull(rand.Reader, nonce) //random is good for encryption
+	ciphertext := gcm.Seal(nonce, nonce, data, nil) 
 	return ciphertext
 } 
 
 func main() {
 	ciphertext := encrypt([]byte("Hello Wolrd this will be encrypted"), "password")
-	fmt.Println(ciphertext)
+	fmt.Println(string(ciphertext)) //converts the buffer into a encoded str
 }
