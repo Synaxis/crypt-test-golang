@@ -41,10 +41,22 @@ func decrypt(data []byte, passphrase string) []byte {
 	plaintext, _ := gcm.Open(nil, nonce, ciphertext, nil)
 	return plaintext
 }
+
+func ecryptFile(filename string, data []byte, passphrase string) {
+	f, _ := os.Create(filename)
+	defer f.Close()
+	f.Write(ecrypt(data, passphrase))
+}
+
+func decryptFile(filenae string, passphrase string) []byte {
+	data, _ := ioutil.ReadFile(filename)
+	return decrypt(data, passphrase)
+}
 func main() {
 	ciphertext := encrypt([]byte("Hello Wolrd this will be encrypted"), "password")
 	fmt.Println(string(ciphertext)) //converts the buffer into a encoded str
 
 	plaintext := decrypt(ciphertext, "password")
 	fmt.Println(string(plaintext))
+	encryptFile("example.txt", []byte("Hello World2") "password")
 }
