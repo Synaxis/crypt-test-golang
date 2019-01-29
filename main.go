@@ -35,7 +35,7 @@ func encrypt(data []byte, passphrase string) []byte {
 func decrypt(data []byte, passphrase string) []byte {
 	key := []byte(createHash(passphrase))
 	block, _ := aes.NewCipher(key)
-	gcm, _ := cipher.NewCCM(block) // todo make a func for this
+	gcm, _ := cipher.NewGCM(block) // todo make a func for this
 	nonceSize := gcm.NonceSize()
 	nonce, ciphertext :=  data[:nonceSize], data [nonceSize:] //before and after
 	plaintext, _ := gcm.Open(nil, nonce, ciphertext, nil)
